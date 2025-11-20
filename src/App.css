@@ -1,0 +1,125 @@
+#root {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+}
+
+.logo {
+  height: 6em;
+  padding: 1.5em;
+  will-change: filter;
+  transition: filter 300ms;
+}
+.logo:hover {
+  filter: drop-shadow(0 0 2em #646cffaa);
+}
+.logo.react:hover {
+  filter: drop-shadow(0 0 2em #61dafbaa);
+}
+
+@keyframes logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  a:nth-of-type(2) .logo {
+    animation: logo-spin infinite 20s linear;
+  }
+}
+
+.card {
+  padding: 2em;
+}
+
+.read-the-docs {
+  color: #1eff01;
+}
+
+:root {
+  --light: #0c00e9;
+  --dark:  #ff3c00;
+  --sel:   #00ff1580;
+}
+
+* { box-sizing: border-box; }
+
+.app {
+  min-height: 100svh;
+  display: grid;
+  place-items: center;
+  gap: 1rem;
+  padding: 1rem;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+}
+.logo { height: 40px; }
+.logo.react { animation: spin 20s linear infinite; }
+@keyframes spin { from { transform: rotate(0) } to { transform: rotate(360deg) } }
+
+.board {
+  display: grid;
+  grid-template-columns: repeat(8, min(10vw, 64px));
+  grid-auto-rows: min(10vw, 64px);
+  border: 4px solid #000000;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.square {
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: none;
+  cursor: pointer;
+  outline: none;
+}
+.square.light { background: var(--light); }
+.square.dark  { background: var(--dark); }
+.square.selected { box-shadow: inset 0 0 0 4px var(--sel); }
+
+.piece {
+  font-size: min(7vw, 44px);
+  line-height: 1;
+  user-select: none;
+}
+
+.coords {
+  width: 100%;
+  max-width: calc(min(10vw, 64px) * 8);
+  display: grid;
+  gap: .25rem;
+}
+.files, .ranks {
+  display: grid;
+  color: #555;
+  font-size: .9rem;
+}
+.files { grid-template-columns: repeat(8, 1fr); text-align: center; }
+.ranks { grid-template-rows: repeat(8, 1fr); justify-items: end; max-height: 0; visibility: hidden; }
+.main {
+  display: flex;
+  gap: 16px;
+}
+
+.moves-panel {
+  width: 220px;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.move-item {
+  border: 1px solid #555;
+  padding: 8px;
+  margin-bottom: 8px;
+  border-radius: 4px;
+}
