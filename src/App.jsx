@@ -3,6 +3,9 @@ import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
 
+// importa la página del diagrama de pila
+import StackDiagram from './pages/StackDiagram'
+
 const START = [
   ['♜','♞','♝','♛','♚','♝','♞','♜'],
   ['♟','♟','♟','♟','♟','♟','♟','♟'],
@@ -48,7 +51,7 @@ function coordToAlgebraic(r, c) {
   return file + rank
 }
 
-// ======= MOVIMIENTOS POR PIEZA =======
+// ======= MOVIMIENTOS =======
 function generatePawnMoves(board, r, c, color) {
   const moves = []
   const dir = color === 'w' ? -1 : 1
@@ -173,15 +176,16 @@ function getLegalMoves(board, fromR, fromC, turn) {
 }
 
 export default function App() {
-  const [board, setBoard] = useState(START)
-  const [selected, setSelected] = useState(null)     // {r,c} o null
-  const [moves, setMoves] = useState([])             // casillas posibles
-  const [turn, setTurn] = useState('w')              // 'w' o 'b'
+  // vista actual: tablero o diagrama de pila
+  const [view, setView] = useState('chess')
 
-  // Pila de estados para UNDO
-  const [boardHistory, setBoardHistory] = useState([]) 
-  // Historial de jugadas para mostrar bloques
-  const [moveHistory, setMoveHistory] = useState([])  // [{number, piece, from, to, captured}]
+  const [board, setBoard] = useState(START)
+  const [selected, setSelected] = useState(null)
+  const [moves, setMoves] = useState([])
+  const [turn, setTurn] = useState('w')
+
+  const [boardHistory, setBoardHistory] = useState([])
+  const [moveHistory, setMoveHistory] = useState([])
 
   function handleSquareClick(r, c) {
     const piece = board[r][c]
@@ -199,14 +203,12 @@ export default function App() {
 
     const { r: fromR, c: fromC } = selected
 
-    // Click mismo cuadro -> cancelar selección
     if (fromR === r && fromC === c) {
       setSelected(null)
       setMoves([])
       return
     }
 
-    // Cambiar selección a otra pieza del mismo color
     if (piece && color === turn) {
       const legal = getLegalMoves(board, r, c, turn)
       setSelected({ r, c })
@@ -217,32 +219,17 @@ export default function App() {
     const isLegal = moves.some((m) => m.r === r && m.c === c)
     if (!isLegal) return
 
-    // ===== GUARDAR ESTADO ANTES DE MOVER (PILA) =====
-    setBoardHistory((prev) => [
-      ...prev,
-      {
-        board: cloneBoard(board),
-        turn
-      }
-    ])
+    setBoardHistory((prev) => [...prev, { board: cloneBoard(board), turn }])
 
-    // Datos de la jugada (para la tabla/bloques)
     const movingPiece = board[fromR][fromC]
     const captured = board[r][c] || ''
     const moveNumber = moveHistory.length + 1
 
     setMoveHistory((prev) => [
       ...prev,
-      {
-        number: moveNumber,
-        piece: movingPiece,
-        from: { r: fromR, c: fromC },
-        to: { r, c },
-        captured
-      }
+      { number: moveNumber, piece: movingPiece, from: { r: fromR, c: fromC }, to: { r, c }, captured }
     ])
 
-    // Ejecutar movimiento
     const newBoard = cloneBoard(board)
     newBoard[fromR][fromC] = ''
     newBoard[r][c] = movingPiece
@@ -261,13 +248,12 @@ export default function App() {
     if (boardHistory.length === 0) return
 
     const last = boardHistory[boardHistory.length - 1]
-    const newBoardHistory = boardHistory.slice(0, boardHistory.length - 1)
-    const newMoveHistory = moveHistory.slice(0, moveHistory.length - 1)
-
     setBoard(last.board)
     setTurn(last.turn)
-    setBoardHistory(newBoardHistory)
-    setMoveHistory(newMoveHistory)
+
+    setBoardHistory(boardHistory.slice(0, -1))
+    setMoveHistory(moveHistory.slice(0, -1))
+
     setSelected(null)
     setMoves([])
   }
@@ -275,86 +261,114 @@ export default function App() {
   return (
     <div className="app">
       <header className="header">
-        <a href="https://vitejs.dev" target="_blank" rel="noreferrer">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
+        <a href="https://vitejs.dev" target="_blank">
+          <img src={viteLogo} className="logo" />
         </a>
-        <a href="https://react.dev" target="_blank" rel="noreferrer">
-          <img src={reactLogo} className="logo react" alt="React logo" />
+        <a href="https://react.dev" target="_blank">
+          <img src={reactLogo} className="logo react" />
         </a>
         <h1>Ajedrez</h1>
-        <p>Turno: {turn === 'w' ? 'Blancas' : 'Negras'}</p>
 
-        <button
-          onClick={handleUndo}
-          disabled={boardHistory.length === 0}
-          className="undo-btn"
-        >
-          Deshacer jugada
-        </button>
+        {/* botones para cambiar de "página" */}
+        <div className="view-switch">
+          <button
+            className={view === 'chess' ? 'view-btn active' : 'view-btn'}
+            onClick={() => setView('chess')}
+          >
+            Tablero
+          </button>
+          <button
+            className={view === 'stack' ? 'view-btn active' : 'view-btn'}
+            onClick={() => setView('stack')}
+          >
+            Diagrama de Pila
+          </button>
+        </div>
+
+        {view === 'chess' && (
+          <>
+            <p>Turno: {turn === 'w' ? 'Blancas' : 'Negras'}</p>
+            <button
+              onClick={handleUndo}
+              disabled={boardHistory.length === 0}
+              className="undo-btn"
+            >
+              Deshacer jugada
+            </button>
+          </>
+        )}
       </header>
 
-      <div className="main">
-        {/* TABLERO */}
-        <div className="board">
-          {board.map((row, r) =>
-            row.map((cell, c) => {
-              const isDark = (r + c) % 2 === 1
-              const isSelected = selected && selected.r === r && selected.c === c
-              const isPossible = isInMoves(r, c)
-
-              return (
-                <button
-                  key={`${r}-${c}`}
-                  className={[
-                    'square',
-                    isDark ? 'dark' : 'light',
-                    isSelected ? 'selected' : '',
-                    isPossible ? 'possible' : ''
-                  ].join(' ')}
-                  onClick={() => handleSquareClick(r, c)}
-                  aria-label={`fila ${8 - r}, columna ${String.fromCharCode(65 + c)}`}
-                >
-                  <span className="piece">{cell}</span>
-                </button>
-              )
-            })
-          )}
-        </div>
-
-        {/* HISTORIAL DE JUGADAS COMO BLOQUES */}
-        <div className="moves-panel">
-          <h2>Historial de jugadas</h2>
-          <div className="moves-list">
-            {moveHistory
-              .slice()       // copia
-              .reverse()     // última jugada arriba
-              .map((m) => (
-                <div key={m.number} className="move-item">
-                  <strong>Jugada {m.number}</strong>
-                  <div className="move-detail">
-                    {m.piece}{' '}
-                    {coordToAlgebraic(m.from.r, m.from.c)}{' '}
-                    → {coordToAlgebraic(m.to.r, m.to.c)}
-                    {m.captured ? `  x ${m.captured}` : ''}
-                  </div>
-                </div>
+      {view === 'chess' ? (
+        <div className="main">
+          {/* ===== TABLERO + COORDENADAS ===== */}
+          <div className="board-wrapper">
+            {/* NÚMEROS A LA IZQUIERDA */}
+            <div className="ranks-left">
+              {'87654321'.split('').map((n) => (
+                <span key={n}>{n}</span>
               ))}
+            </div>
+
+            {/* TABLERO */}
+            <div className="board">
+              {board.map((row, r) =>
+                row.map((cell, c) => {
+                  const isDark = (r + c) % 2 === 1
+                  const isSelected =
+                    selected && selected.r === r && selected.c === c
+                  const isPossible = isInMoves(r, c)
+
+                  return (
+                    <button
+                      key={`${r}-${c}`}
+                      className={[
+                        'square',
+                        isDark ? 'dark' : 'light',
+                        isSelected ? 'selected' : '',
+                        isPossible ? 'possible' : ''
+                      ].join(' ')}
+                      onClick={() => handleSquareClick(r, c)}
+                    >
+                      <span className="piece">{cell}</span>
+                    </button>
+                  )
+                })
+              )}
+            </div>
+
+            {/* LETRAS ABAJO */}
+            <div className="files-bottom">
+              {'ABCDEFGH'.split('').map((l) => (
+                <span key={l}>{l}</span>
+              ))}
+            </div>
+          </div>
+
+          {/* ===== HISTORIAL ===== */}
+          <div className="moves-panel">
+            <h2>Historial de jugadas</h2>
+            <div className="moves-list">
+              {moveHistory
+                .slice()
+                .reverse()
+                .map((m) => (
+                  <div key={m.number} className="move-item">
+                    <strong>Jugada {m.number}</strong>
+                    <div className="move-detail">
+                      {m.piece} {coordToAlgebraic(m.from.r, m.from.c)} →{' '}
+                      {coordToAlgebraic(m.to.r, m.to.c)}
+                      {m.captured ? `  x ${m.captured}` : ''}
+                    </div>
+                  </div>
+                ))}
+            </div>
           </div>
         </div>
-      </div>
-
-      <div className="coords">
-        <div className="files">
-          {'ABCDEFGH'.split('').map((l) => (
-            <span key={l}>{l}</span>
-          ))}
-        </div>
-        <div className="ranks">
-          {'87654321'.split('').map((n) => (
-            <span key={n}>{n}</span>
-          ))}
-        </div>
-      </div>
+      ) : (
+        // página del diagrama de pila
+        <StackDiagram />
+      )}
     </div>
   )
 }

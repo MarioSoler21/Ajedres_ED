@@ -123,3 +123,262 @@
   margin-bottom: 8px;
   border-radius: 4px;
 }
+.app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: white;
+}
+
+.main {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 3rem;
+  margin-top: 20px;
+}
+
+.board-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.board {
+  display: grid;
+  grid-template-columns: repeat(8, 65px);
+  grid-template-rows: repeat(8, 65px);
+  border: 4px solid #fff;
+}
+
+.square {
+  width: 65px;
+  height: 65px;
+  font-size: 32px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: none;
+}
+
+.dark {
+  background: #0031ff;
+}
+
+.light {
+  background: #ff4d00;
+}
+
+.selected {
+  outline: 4px solid yellow;
+}
+
+.possible {
+  box-shadow: inset 0 0 0 4px #00ff00;
+}
+
+.piece {
+  pointer-events: none;
+  font-size: 32px;
+}
+
+.ranks-left {
+  position: absolute;
+  left: -25px;
+  top: 0;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  font-size: 16px;
+  color: #fff;
+}
+
+.files-bottom {
+  margin-top: 6px;
+  display: grid;
+  grid-template-columns: repeat(8, 65px);
+  font-size: 16px;
+  text-align: center;
+  color: #fff;
+}
+
+.moves-panel {
+  width: 250px;
+  max-height: 500px;
+  overflow-y: auto;
+}
+
+.move-item {
+  background: #222;
+  padding: 10px;
+  border-radius: 8px;
+  margin-bottom: 10px;
+}
+.stack-page {
+  min-height: 100vh;
+  padding: 2rem;
+  color: #f5f5f5;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.stack-subtitle {
+  max-width: 700px;
+  opacity: 0.9;
+}
+
+.stack-layout {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2.5rem;
+  align-items: flex-start;
+}
+
+.stack-controls {
+  min-width: 260px;
+  max-width: 340px;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1.5rem;
+  border-radius: 12px;
+  background: #1e1e1e;
+}
+
+.stack-label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.stack-input {
+  padding: 0.5rem 0.75rem;
+  border-radius: 8px;
+  border: 1px solid #444;
+  background: #111;
+  color: #f5f5f5;
+}
+
+.stack-buttons {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.stack-btn {
+  flex: 1;
+  padding: 0.5rem 0.75rem;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.push-btn {
+  background: #2563eb;
+  color: white;
+}
+
+.pop-btn {
+  background: #ef4444;
+  color: white;
+}
+
+.pop-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.stack-info p {
+  margin: 0.15rem 0;
+}
+
+.stack-diagram {
+  flex: 1;
+  min-width: 260px;
+  padding: 1.5rem;
+  border-radius: 12px;
+  background: #1e1e1e;
+}
+
+.stack-visual {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  width: 220px;
+  min-height: 220px;
+  border-radius: 12px;
+  border: 2px solid #444;
+  padding: 0.5rem 0.75rem;
+  display: flex;
+  flex-direction: column-reverse;
+  justify-content: flex-start;
+  gap: 0.35rem;
+}
+
+.stack-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.35rem 0.5rem;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #3b82f6, #22c55e);
+  font-size: 0.85rem;
+}
+
+.stack-item-level {
+  font-weight: 700;
+}
+
+.stack-item-value {
+  font-weight: 500;
+}
+
+.stack-base {
+  width: 100%;
+  text-align: center;
+  padding: 0.3rem 0;
+  border-radius: 6px;
+  background: #111827;
+  border: 1px dashed #6b7280;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.stack-note {
+  font-size: 0.85rem;
+  opacity: 0.9;
+}
+.stack-page {
+  color: white;
+  padding: 2rem;
+  max-width: 800px;
+  margin: auto;
+}
+
+.stack-diagram-box {
+  margin: 2rem 0;
+  font-family: monospace;
+  font-size: 1rem;
+  line-height: 1.2;
+}
+
+.stack-level {
+  margin-left: 1rem;
+}
+
+.stack-base {
+  margin-top: 0.5rem;
+  font-weight: bold;
+  text-align: center;
+}
+
+.code-box {
+  background: #1a1a1a;
+  padding: 1rem;
+  border-radius: 8px;
+  margin-top: 1rem;
+  color: #00eaff;
+}
